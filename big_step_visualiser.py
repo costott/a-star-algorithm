@@ -38,7 +38,7 @@ for i, row in enumerate(map_list):
             nodes.append(Node((j,i)))
 
 # GET THE CURRENT AND TARGET NODES
-current_map_pos = Vector2(random.randint(0,rows-1),random.randint(0,rows-1)) # will be converted from enemy pos
+current_map_pos = Vector2(random.randint(0,cols-1),random.randint(0,rows-1)) # will be converted from enemy pos
 for node in nodes: # find the current map node
     if node.pos == current_map_pos: 
         current_map_node = node
@@ -46,7 +46,7 @@ for node in nodes: # find the current map node
 else: 
     current_map_node = Node(current_map_pos) # make sure the current position is a node even if it's not traversable
     nodes.append(current_map_node)
-target_node_pos = Vector2(random.randint(0,rows-1),random.randint(0,rows-1)) # will be converted from player pos
+target_node_pos = Vector2(random.randint(0,cols-1),random.randint(0,rows-1)) # will be converted from player pos
 for node in nodes: # find the target node
     if node.pos == target_node_pos:
         target_node = node
