@@ -1,0 +1,4 @@
+player_pos = vector2(1134345,13451)
+current_pos = vector2(13241,234234)
+
+pathfind_csv = csv
