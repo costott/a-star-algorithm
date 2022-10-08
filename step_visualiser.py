@@ -1,5 +1,6 @@
 from pygame.math import Vector2 
 from connorama import Back
+import time
 import os
 
 class Node:
@@ -61,6 +62,26 @@ else:
 for node in nodes: # calculate the heuristics for all the nodes
     node.calculate_heuristic(target_node.pos)
 
+def print_map(show_path: bool = False):
+    total_string = "" # string to print
+    for i, row in enumerate(map_list):
+        row_string = "" # string for the row
+        for j, col in enumerate(row):
+            if col == 0: row_string += Back.white                   # colour obstacles white
+            elif col == 1:
+                if show_path and (j,i) in path: row_string += Back.green # colour path green
+                else: 
+                    for node in nodes:
+                        if node.pos == Vector2(j,i):
+                            current_node = node                    # colour traversable + calculated magenta
+                    if current_node.previous_node != None: row_string += Back.light_magenta
+                    else: row_string += Back.RESET                 # colour traversable black(trasparent)
+            if (j,i) == current_map_pos: row_string += Back.yellow # colour current pos yellow
+            elif (j,i) == target_node_pos: row_string += Back.cyan # colour target cyan
+            row_string += "  " # space to be coloured
+        total_string += row_string + Back.RESET + "\n" # add row string to total
+    print(total_string)
+
 # set up the current node to start pathfinding
 current_map_node.distance_from_start = 0
 current_map_node.total_distance = 0
@@ -113,16 +134,13 @@ while 1: # continue until pathfinding is complete
     if min_node == target_node: break # finish when reached the target
 
     pathfind_node = min_node # go to next node
+    os.system('cls')
+    print_map()
+    time.sleep(0.05)
 
-    # os.system('cls')
-    # print("pos | visited | distance | heuristic | total | previous node")
-    # for node in nodes:
-    #     node.show_table()
-    # input()
-
-print("pos | visited | distance | heuristic | total | previous node")
-for node in nodes:
-    node.show_table()
+# print("pos | visited | distance | heuristic | total | previous node")
+# for node in nodes:
+#     node.show_table()
 
 def get_path(current_end: Node) -> list:
     """recursively goes back through previous nodes until it reaches the start\n
@@ -132,23 +150,5 @@ def get_path(current_end: Node) -> list:
     else: return [current_end.pos] + get_path(previous) # add the next nodes
 
 path = get_path(target_node)
-
-# PRINT MAP AND PATH
-total_string = "" # string to print
-for i, row in enumerate(map_list):
-    row_string = "" # string for the row
-    for j, col in enumerate(row):
-        if col == 0: row_string += Back.white                   # colour obstacles white
-        elif col == 1:
-            if (j,i) in path: row_string += Back.green          # colour path green
-            else: 
-                for node in nodes:
-                    if node.pos == Vector2(j,i):
-                        current_node = node                    # colour traversable + calculated magenta
-                if current_node.previous_node != None: row_string += Back.light_magenta
-                else: row_string += Back.RESET                 # colour traversable black(trasparent)
-        if (j,i) == current_map_pos: row_string += Back.yellow # colour current pos yellow
-        elif (j,i) == target_node_pos: row_string += Back.cyan # colour target cyan
-        row_string += "  " # space to be coloured
-    total_string += row_string + Back.RESET + "\n" # add row string to total
-print(total_string)
+os.system('cls')
+print_map(True)
