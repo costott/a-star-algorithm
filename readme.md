@@ -1,3 +1,5 @@
-greedy but can be exhaustive if line 108 deleted
+greedy but can be exhaustive if line 113 deleted (main) 133 (step_visualiser) 129 (big_step_visualiser)
 
-probably not too efficient but it works
+each python file is independent
+
+for much faster execution times for the visualisers don't print during the pathfinding, and for the fastest execution time don't print at all

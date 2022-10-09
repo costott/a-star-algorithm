@@ -28,9 +28,9 @@ map_list = [ # 1 = traversable, 0 = obstacle
     [1,1,1,1,1,1,1,1,1,1],
     [1,1,0,0,0,0,0,0,1,1],
     [1,1,0,0,1,0,0,0,1,1],
-    [1,1,0,0,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,0,0,0,1,1,1],
+    [1,1,0,0,1,1,0,1,1,1],
+    [1,1,1,1,1,1,0,1,1,1],
+    [1,1,1,0,0,0,0,1,1,1],
     [1,1,1,1,0,0,0,1,1,1],
     [1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1],
@@ -42,7 +42,7 @@ for i, row in enumerate(map_list):
             nodes.append(Node((j,i)))
 
 # GET THE CURRENT AND TARGET NODES
-current_map_pos = Vector2(0,0) # will be converted from enemy pos
+current_map_pos = Vector2(5,5) # will be converted from enemy pos
 for node in nodes: # find the current map node
     if node.pos == current_map_pos: 
         current_map_node = node
@@ -50,7 +50,7 @@ for node in nodes: # find the current map node
 else: 
     current_map_node = Node(current_map_pos) # make sure the current position is a node even if it's not traversable
     nodes.append(current_map_node)
-target_node_pos = Vector2(5,5) # will be converted from player pos
+target_node_pos = Vector2(1,1) # will be converted from player pos
 for node in nodes: # find the target node
     if node.pos == target_node_pos:
         target_node = node
@@ -76,6 +76,7 @@ def print_map(show_path: bool = False):
                             current_node = node                    # colour traversable + calculated magenta
                     if current_node.previous_node != None: row_string += Back.light_magenta
                     else: row_string += Back.RESET                 # colour traversable black(trasparent)
+                    if current_node.visited: row_string += Back.light_red
             if (j,i) == current_map_pos: row_string += Back.yellow # colour current pos yellow
             elif (j,i) == target_node_pos: row_string += Back.cyan # colour target cyan
             row_string += "  " # space to be coloured
@@ -86,6 +87,7 @@ def print_map(show_path: bool = False):
 current_map_node.distance_from_start = 0
 current_map_node.total_distance = 0
 pathfind_node = current_map_node # current node which paths are being calculated
+calculated_nodes = [] # holds a list of nodes calculated but not visited
 
 while 1: # continue until pathfinding is complete
     pathfind_node.visited = True
@@ -96,13 +98,16 @@ while 1: # continue until pathfinding is complete
     right = pathfind_node.pos + Vector2(1,0)
     neighbours = [up, down, left, right]
 
-    for neighbour in neighbours: # check+update neighbouts if the neighbours get closer to the target
+    for neighbour in neighbours: # check+update neighbours if the neighbours get closer to the target
         # linear search get the node of the neighbour
         for node in nodes:
             if node.pos == neighbour:
                 neighbour_node = node
                 break
         else: continue # neighbour isn't traversable (out of map/obstacle)
+
+        if neighbour_node.visited: continue # don't try to recalculate already visited neighbours
+        if neighbour_node not in calculated_nodes: calculated_nodes.append(neighbour_node) # add neighbour to calculated nodes
 
         new_distance = pathfind_node.distance_from_start + 1 # new distance is 1 more than the previous node
         new_total = neighbour_node.heuristic + new_distance  # add heuristic for total distance
@@ -114,8 +119,7 @@ while 1: # continue until pathfinding is complete
     # get the closest node to the target to visit next
     min_node_distance = float("inf") 
     min_node = None
-    for node in nodes: # linear search to find the closest next node
-        if node.visited: continue # inore already visited nodes
+    for node in calculated_nodes: # linear search to find the closest next node
         if node.total_distance < min_node_distance: # current closest path searched
             min_node_distance = node.total_distance
             min_node = node
@@ -123,17 +127,14 @@ while 1: # continue until pathfinding is complete
         elif node.total_distance == min_node_distance and min_node_distance != float("inf"):
             if node.heuristic < min_node.heuristic:
                 min_node = node
-    if min_node == None: # no node closer than infinity, or all nodes visited
-        for node in nodes: # linear search to find the first unvisited node
-            if not node.visited: 
-                min_node = node
-                break 
-        else: # no unvisited nodes
-            break # finish pathfinding
+    if min_node == None: # all possible nodes visited (and no target found)
+        break # impossible to find target
     
     if min_node == target_node: break # finish when reached the target
 
     pathfind_node = min_node # go to next node
+    calculated_nodes.remove(min_node) # remove from calculated as it's going to be visted
+
     os.system('cls')
     print_map()
     time.sleep(0.05)
