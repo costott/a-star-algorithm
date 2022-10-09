@@ -78,6 +78,7 @@ def main():
                 elif (j,i) == target_node_pos: row_string += Back.cyan # colour target cyan
                 row_string += "  " # space to be coloured
             total_string += row_string + Back.RESET + "\n" # add row string to total
+        print("\033[H\033[J", end='')
         print(total_string)
 
     # set up the current node to start pathfinding
@@ -131,7 +132,6 @@ def main():
         pathfind_node = min_node # go to next node
         calculated_nodes.remove(min_node) # remove from calculated as it's going to be visted
 
-        print("\033[H\033[J", end='')
         print_map()
 
     # print("pos | visited | distance | heuristic | total | previous node")
@@ -146,7 +146,6 @@ def main():
         else: return [current_end.pos] + get_path(previous) # add the next nodes
 
     path = get_path(target_node)
-    print("\033[H\033[J", end='')
     print_map(True)
     input("press [ENTER] To Continue: ")
 
