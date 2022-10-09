@@ -101,6 +101,7 @@ while 1: # continue until pathfinding is complete
         if node.total_distance < min_node_distance: # current closest path searched
             min_node_distance = node.total_distance
             min_node = node
+        # tie break if distances are equal
         elif node.total_distance == min_node_distance and min_node_distance != float("inf"):
             if node.heuristic < min_node.heuristic:
                 min_node = node
