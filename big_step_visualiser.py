@@ -71,6 +71,7 @@ def main():
                         for node in nodes:
                             if node.pos == Vector2(j,i):
                                 current_node = node                    # colour traversable + calculated magenta
+                                break
                         if current_node.previous_node != None: row_string += Back.light_magenta
                         else: row_string += Back.RESET                 # colour traversable black(trasparent)
                         if current_node.visited: row_string += Back.light_red
