@@ -126,7 +126,17 @@ def main():
                 if node.heuristic < min_node.heuristic:
                     min_node = node
         if min_node == None: # all possible nodes visited (and no target found)
-            break # impossible to find target
+            # get visited node with smallest heuristic
+            min_heuristic = float("inf")
+            min_heuristic_node = None
+            for node in nodes: # linear search to find visited node with smallest heurstic
+                if not node.visited: continue
+                if node.heuristic < min_heuristic:
+                    min_heuristic = node.heuristic
+                    min_heuristic_node = node
+            # make new target
+            if min_heuristic_node != None: target_node = min_heuristic_node
+            break # pathfinding done - get path to new target
         
         if min_node == target_node: break # finish when reached the target
 
